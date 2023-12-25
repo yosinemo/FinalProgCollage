@@ -74,10 +74,10 @@ class MainDynGUI(MainGUI): ## create new class inheritate from MainGUI
             result = cv2.bitwise_and(imageFrame, imageFrame, mask=result1)
             ## show the filtered image of the seleccted button
             if self.SelectGame() == 1:
-                if self.OdedAmar.GameStart(ColorTrackerImage,"Oded Amar"):
+                if self.OdedAmar.GameStart(ColorTrackerImage,"ODED AMAR"):
                     print("Done")
             elif self.SelectGame() == 2:
-                if self.GoTo.GameStart(ColorTrackerImage,"Go-To"):
+                if self.GoTo.GameStart(ColorTrackerImage,"GO-TO"):
                     print("Done")
             elif self.SelectGame() == 3:
                 if self.game.Simon(ColorTrackerImage):
