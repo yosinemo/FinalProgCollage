@@ -27,6 +27,10 @@ class GameSetup:
         self.SV["LEFT"]             = int(self.PresentFormula(20,self.SV["XRES"]))
         self.SV["RIGHT"]            = int(self.SV["XRES"] - self.SV["LEFT"])
         self.SV["DOWN"]             = int(self.SV["YRES"] - self.SV["UP"])
+        self.SV["MT_LU_Rectingle"]  = {"start":(0,0),"end":(300,300)}
+        self.SV["MT_LD_Rectingle"]  = {"start":(0,self.SV["YMAINRES"] - 300),"end":(300,self.SV["YMAINRES"])}
+        self.SV["MT_RU_Rectingle"]  = {"start":(self.SV["XMAINRES"] - 360,0),"end":(self.SV["XMAINRES"]-40,300)}
+        self.SV["MT_RD_Rectingle"]  = {"start":(self.SV["XMAINRES"] - 360,self.SV["YMAINRES"] - 300),"end":(self.SV["XMAINRES"]-40,self.SV["YMAINRES"])}
         self.SV["XTEXT"]            = int(self.PresentFormula(10,self.SV["XRES"]))
         self.SV["YTEXT"]            = int(self.PresentFormula(20,self.SV["YRES"]))
         self.SV["XTEXTCOLOR"]       = self.SV["XTEXT"] - 20

@@ -157,18 +157,31 @@ class utils:
         return COLORS[color]
 
 
-    def DrawMTRectinles(self,image,thickness=5):
+    def DrawRectinles(self,image,selectREC:str = None,thickness:int=5):
 
-        cv2.rectangle(image, self.shape.get_MTRectingle("MT_LU")["start"], self.shape.get_MTRectingle("MT_LU")["end"],
-                      self.shape.get_MTRectingle("LU")["color"], thickness)
-
-        cv2.rectangle(image, self.shape.get_MTRectingle("MT_RU")["start"], self.shape.get_MTRectingle("MT_RU")["end"],
+        if selectREC == "LU":
+            cv2.rectangle(image, self.SETUP_VARS["MT_LU_Rectingle"]["start"], self.SETUP_VARS["MT_LU_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("LU")["color"], -1)
+        else:
+            cv2.rectangle(image, self.SETUP_VARS["MT_LU_Rectingle"]["start"], self.SETUP_VARS["MT_LU_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("LU")["color"], thickness)
+        if selectREC == "RU":
+            cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("RU")["color"], -1)
+        else:
+            cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
                       self.shape.get_MTRectingle("RU")["color"], thickness)
-
-        cv2.rectangle(image, self.shape.get_MTRectingle("MT_LD")["start"], self.shape.get_MTRectingle("MT_LD")["end"],
+        if selectREC == "LD":
+            cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("RU")["color"], -1)
+        else:
+            cv2.rectangle(image, self.SETUP_VARS["MT_LD_Rectingle"]["start"], self.SETUP_VARS["MT_LD_Rectingle"]["end"],
                       self.shape.get_MTRectingle("LD")["color"], thickness)
-
-        cv2.rectangle(image, self.shape.get_MTRectingle("MT_RD")["start"], self.shape.get_MTRectingle("MT_RD")["end"],
+        if selectREC == "RD":
+            cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("RU")["color"], -1)
+        else:
+            cv2.rectangle(image,self.SETUP_VARS["MT_RD_Rectingle"]["start"], self.SETUP_VARS["MT_RD_Rectingle"]["end"],
                       self.shape.get_MTRectingle("RD")["color"], thickness)
 
     def DrawFullReactinles(self,image,thickness = -1,color = "Blue",thic=5):

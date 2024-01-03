@@ -21,6 +21,7 @@ class MainDynGUI(MainGUI): ## create new class inheritate from MainGUI
         self.CurrentGame = 0
         self.OdedAmar = OdedAmar() ## call OdedAmar class
         self.GoTo = GoTo()         ## call GoTo class
+        self.SIMON = SIMON()
         # self.game = games()
         self.capture = cv2.VideoCapture(0)  # Open the default camera (usually the built-in webcam)
         # Create a timer to update the webcam feed
@@ -80,10 +81,10 @@ class MainDynGUI(MainGUI): ## create new class inheritate from MainGUI
                 if self.GoTo.GameStart(ColorTrackerImage,"GO-TO"):
                     print("Done")
             elif self.SelectGame() == 3:
-                if self.game.Simon(ColorTrackerImage):
+                if self.SIMON.GameStart(ColorTrackerImage,"SIMON"):
                     print("Done")
             else:
-                ColorTrackerImage = cv2.resize(imageFrame, (1700, 900)) ## in case of none button has been bushed
+                ColorTrackerImage = cv2.resize(imageFrame, (self.SETUP_VARS["XMAINRES"], self.SETUP_VARS["YMAINRES"])) ## in case of none button has been bushed
             GoToGameImageCapturePixmap = QPixmap.fromImage(self.qtutil.setOutputImage(ColorTrackerImage))  ## create a qt image from the frame
             pixmap = QPixmap.fromImage(self.qtutil.setOutputImage(result)) # create a function to deal with pic output
             maskpixmap = QPixmap.fromImage(self.qtutil.setOutputImage(mask))

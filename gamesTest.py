@@ -38,7 +38,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.ResetStoper() ## reaset stopper
         self.flag:bool = False
         self.flag1:bool = False
-
+        self.next:bool = True
 
     def GAME_ACTIONS(self,Mode:int,GameName:str) -> 'makes decisions about the continuation of the game':
         self.ResetTime()
@@ -309,28 +309,41 @@ class GoTo(GameEngine):
 class SIMON(GameEngine):
 
     def GameStart(self,CurentCaptureImage,GameName):
-        ## GAME VALUES ####
-        self.set_CaptureImage(CurentCaptureImage)
-        Lowwer, Upper, Color = self.get_UpperLowwerColorRange()
+        if self.GameName != GameName: ## if the game name is diff from the new one make new action according to the game name
+            self.GameName = GameName ## save the game name for the next time
+            self.ResetTime()
+        time = self.get_CurrentTime()
+        print(time)
+        self.ColorUtils.DrawRectinles(CurentCaptureImage)
 
-        ### CREATE COTOURS AND PRINTS ###
-        contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
-        self.TextOnScreen(f" ")
+        if self.next == True:
+            # self.ResetTime()
+            if time == 2:
+                self.next = False
+            self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC="LU")
 
-        self.START_GAME(GameName)
-        self.END_TIME(GameName)
-
-        for shape in self.AllCenterDotArray:
-            print(shape)
-            # cv2.circle(CurentCaptureImage, [shape], 30, Color, 5)
-
-
-        for contour in contours:
-            area = cv.contourArea(contour)
-            if (area > 1000):
-                center = self.ColorUtils.get_ObjectCenter(contour)
-                cv.circle(CurentCaptureImage, center, 1, Color, 2)
-                self.WIN_GAME(center[0],center[1],GameName)
+        # ## GAME VALUES ####
+        # self.set_CaptureImage(CurentCaptureImage)
+        # Lowwer, Upper, Color = self.get_UpperLowwerColorRange()
+        #
+        # ### CREATE COTOURS AND PRINTS ###
+        # contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
+        # self.TextOnScreen(f" ")
+        #
+        # self.START_GAME(GameName)
+        # self.END_TIME(GameName)
+        #
+        # for shape in self.AllCenterDotArray:
+        #     print(shape)
+        #     # cv2.circle(CurentCaptureImage, [shape], 30, Color, 5)
+        #
+        #
+        # for contour in contours:
+        #     area = cv.contourArea(contour)
+        #     if (area > 1000):
+        #         center = self.ColorUtils.get_ObjectCenter(contour)
+        #         cv.circle(CurentCaptureImage, center, 1, Color, 2)
+        #         self.WIN_GAME(center[0],center[1],GameName)
 
 
 
