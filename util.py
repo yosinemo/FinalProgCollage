@@ -172,14 +172,14 @@ class utils:
             cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
                       self.shape.get_MTRectingle("RU")["color"], thickness)
         if selectREC == "LD":
-            cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
-                          self.shape.get_MTRectingle("RU")["color"], -1)
+            cv2.rectangle(image, self.SETUP_VARS["MT_LD_Rectingle"]["start"], self.SETUP_VARS["MT_LD_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("LD")["color"], -1)
         else:
             cv2.rectangle(image, self.SETUP_VARS["MT_LD_Rectingle"]["start"], self.SETUP_VARS["MT_LD_Rectingle"]["end"],
                       self.shape.get_MTRectingle("LD")["color"], thickness)
         if selectREC == "RD":
-            cv2.rectangle(image, self.SETUP_VARS["MT_RU_Rectingle"]["start"], self.SETUP_VARS["MT_RU_Rectingle"]["end"],
-                          self.shape.get_MTRectingle("RU")["color"], -1)
+            cv2.rectangle(image, self.SETUP_VARS["MT_RD_Rectingle"]["start"], self.SETUP_VARS["MT_RD_Rectingle"]["end"],
+                          self.shape.get_MTRectingle("RD")["color"], -1)
         else:
             cv2.rectangle(image,self.SETUP_VARS["MT_RD_Rectingle"]["start"], self.SETUP_VARS["MT_RD_Rectingle"]["end"],
                       self.shape.get_MTRectingle("RD")["color"], thickness)

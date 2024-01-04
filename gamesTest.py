@@ -33,12 +33,14 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.GameName:str = "No Game"
         self.ArrayColors:list[str] = ["Green", "Blue"] ## color array
         self.ArrayLocations:list[str] = ["up", "down", "left", "right"] ## location array
+        self.compose                 = ["LU","RU","LD","RD"]
         self.set_UpperLowwerColorRange(True) ## setting UpperLowwerColorRange
         self.ResetScore() ## reset score
         self.ResetStoper() ## reaset stopper
         self.flag:bool = False
         self.flag1:bool = False
-        self.next:bool = True
+        self.next:bool = False
+        self.num:int = 0
 
     def GAME_ACTIONS(self,Mode:int,GameName:str) -> 'makes decisions about the continuation of the game':
         self.ResetTime()
@@ -308,19 +310,31 @@ class GoTo(GameEngine):
 
 class SIMON(GameEngine):
 
+
+
     def GameStart(self,CurentCaptureImage,GameName):
+
+        l = []
         if self.GameName != GameName: ## if the game name is diff from the new one make new action according to the game name
             self.GameName = GameName ## save the game name for the next time
             self.ResetTime()
         time = self.get_CurrentTime()
-        print(time)
+        # print(time)
         self.ColorUtils.DrawRectinles(CurentCaptureImage)
 
-        if self.next == True:
+        # if self.next == True:
             # self.ResetTime()
-            if time == 2:
-                self.next = False
-            self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC="LU")
+        if time > 1:
+            # print(self.num)
+            self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num])
+        if time == 1:
+            self.num = self.num + 1
+            if self.num == 4:
+                self.num = 0
+            print(l[self.num])
+            self.ResetTime()
+
+
 
         # ## GAME VALUES ####
         # self.set_CaptureImage(CurentCaptureImage)
