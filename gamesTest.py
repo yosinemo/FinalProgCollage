@@ -31,7 +31,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.ColorUtils = utils() ## call color utilts class
         self.GameAttempt:int = 0 ## num of attemptes of player
         self.GameName:str = "No Game"
-        self.ArrayColors:list[str] = ["Green", "Blue"] ## color array
+        self.ArrayColors:list[str] = ["Green", "Green"] ## color array
         self.ArrayLocations:list[str] = ["up", "down", "left", "right"] ## location array
         self.compose                 = ["LU","RU","LD","RD"]
         self.set_UpperLowwerColorRange(True) ## setting UpperLowwerColorRange
@@ -41,6 +41,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.flag1:bool = False
         self.next:bool = False
         self.num:int = 0
+        self.counter:int = 0
 
     def GAME_ACTIONS(self,Mode:int,GameName:str) -> 'makes decisions about the continuation of the game':
         self.ResetTime()
@@ -309,30 +310,55 @@ class GoTo(GameEngine):
                 self.WIN_GAME(center[0],center[1],GameName)
 
 class SIMON(GameEngine):
-
-
-
     def GameStart(self,CurentCaptureImage,GameName):
-
-        l = []
+        self.set_CaptureImage(CurentCaptureImage)
+        Lowwer, Upper, Color = self.get_UpperLowwerColorRange()
+        l = ["LU","LD","RD","RU"]
         if self.GameName != GameName: ## if the game name is diff from the new one make new action according to the game name
             self.GameName = GameName ## save the game name for the next time
             self.ResetTime()
         time = self.get_CurrentTime()
-        # print(time)
         self.ColorUtils.DrawRectinles(CurentCaptureImage)
+        contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
+        print(self.next)
+        print(self.num)
+        print(self.counter)
+        if self.next == False:
+            if time > 1:
+                self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num],color = (0,0,255))
+            if time == 1:
+                if self.num < self.counter:
+                    self.num = self.num + 1
+                else:
+                    self.num = 0
+                    self.next = True
+                self.ResetTime()
 
-        # if self.next == True:
-            # self.ResetTime()
-        if time > 1:
-            # print(self.num)
-            self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num])
-        if time == 1:
-            self.num = self.num + 1
-            if self.num == 4:
-                self.num = 0
-            print(l[self.num])
-            self.ResetTime()
+        if self.next == True:
+            for contour in contours:
+                area = cv.contourArea(contour)
+                if (area > 1000):
+                    center = self.ColorUtils.get_ObjectCenter(contour)
+                    cv.circle(CurentCaptureImage, center, 1, Color, 2)
+                    pXstart = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["start"][0]
+                    pYstart = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["start"][1]
+                    pXend = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["end"][0]
+                    pYend = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["end"][1]
+                    # print(f"{pXend} <= {center[0]} <= {pXstart} and {pYstart} <= {center[1]} <= {pYend}")
+                    # print(center[0], center[1], pXend, pYend, pXstart, pYstart)
+                    pos = self.ShapeUtils.get_PointRectangle(center[0], center[1], pXend, pYstart, pXstart, pYend)
+                    self.TextOnScreen(f"{pos}")
+                    if pos == "Inside":
+                        self.ResetTime()
+                        if time >= 4:
+                            self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num],color = (0,255,0))
+                        if self.num < self.counter:
+                            self.num = self.num + 1
+                        else:
+                            self.counter = self.counter + 1
+                            self.num = 0
+                            self.next = False
+
 
 
 

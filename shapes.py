@@ -101,13 +101,10 @@ class shapes:
 
 
     def get_MTRectingle(self, rectingle,thick=5):
-        RECTINGLE = {   "MT_LU": {'start': (0,0), 'end': (160,115), "color": (0, 0, 0),},
-                        "MT_RU": {'start': (480,115), 'end': (640,0), "color": (0, 0, 0)},
-                        "MT_LD": {'start': (0, 480), 'end': (160, 345), "color": (0, 0, 0)},
-                        "MT_RD": {'start': (480, 345), 'end': (640,480 ), "color": (0, 0, 0)},
-                        "LU": {'start': (0+thick, 0+thick), 'end': (160-thick, 115-thick), "color": (0, 0, 0)},
+        RECTINGLE = {   "LU": {'start': (0+thick, 0+thick), 'end': (160-thick, 115-thick), "color": (0, 0, 0)},
                         "RU": {'start': (480+thick, 115+thick), 'end': (640-thick, 0-thick), "color": (0, 0, 0)},
                         "LD": {'start': (0+thick, 480+thick), 'end': (160-thick, 345-thick), "color": (0, 0, 0)},
-                        "RD": {'start': (480+thick, 345+thick), 'end': (640-thick, 480-thick), "color": (0, 0, 0)}}
+                        "RD": {'start': (480+thick, 345+thick), 'end': (640-thick, 480-thick), "color": (0, 0, 0)}
+                        }
 
         return RECTINGLE[rectingle]
