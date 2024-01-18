@@ -11,7 +11,10 @@ class Timer(threading.Thread):
 
     def run(self):
         while self.StratTimeSec >= -1:
-            self.StratTimeSec -=1
+            self.StratTimeSec -= 1
+            if self.StratTimeSec == -1:
+                self.StratTimeSec = 5
+
             time.sleep(1)
 
     def Reset(self):

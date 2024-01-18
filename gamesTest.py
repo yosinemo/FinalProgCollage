@@ -39,8 +39,9 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.ResetStoper() ## reaset stopper
         self.flag:bool = False
         self.flag1:bool = False
-        self.next:bool = False
         self.num:int = 0
+        self.next:bool = False
+        self.delay:int = 0
         self.counter:int = 0
 
     def GAME_ACTIONS(self,Mode:int,GameName:str) -> 'makes decisions about the continuation of the game':
@@ -79,7 +80,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
     def END_TIME(self,GameName:str)-> 'check if time end':
         Time = self.get_CurrentTime() ## get the current time
-        if Time == -1: ## if the var is equ to -1 it endd of time
+        if Time == 0: ## if the var is equ to -1 it endd of time
             self.flag = True ## turn flag on
             super().Reset() ## reset timer
         if self.flag and Time == 5: ## only is flag and time are true make game action
@@ -311,6 +312,7 @@ class GoTo(GameEngine):
 
 class SIMON(GameEngine):
     def GameStart(self,CurentCaptureImage,GameName):
+        i = 10
         self.set_CaptureImage(CurentCaptureImage)
         Lowwer, Upper, Color = self.get_UpperLowwerColorRange()
         l = ["LU","LD","RD","RU"]
@@ -320,9 +322,6 @@ class SIMON(GameEngine):
         time = self.get_CurrentTime()
         self.ColorUtils.DrawRectinles(CurentCaptureImage)
         contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
-        print(self.next)
-        print(self.num)
-        print(self.counter)
         if self.next == False:
             if time > 1:
                 self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num],color = (0,0,255))
@@ -344,48 +343,23 @@ class SIMON(GameEngine):
                     pYstart = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["start"][1]
                     pXend = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["end"][0]
                     pYend = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["end"][1]
-                    # print(f"{pXend} <= {center[0]} <= {pXstart} and {pYstart} <= {center[1]} <= {pYend}")
-                    # print(center[0], center[1], pXend, pYend, pXstart, pYstart)
                     pos = self.ShapeUtils.get_PointRectangle(center[0], center[1], pXend, pYstart, pXstart, pYend)
                     self.TextOnScreen(f"{pos}")
+
                     if pos == "Inside":
-                        self.ResetTime()
-                        if time >= 4:
-                            self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num],color = (0,255,0))
+                        if self.delay != i:
+                            self.ColorUtils.DrawRectinles(CurentCaptureImage, selectREC=l[self.num], color=(0, 255, 0))
+                            self.delay +=1
+
+                    if self.delay == i:
+                        self.delay = 0
                         if self.num < self.counter:
                             self.num = self.num + 1
                         else:
                             self.counter = self.counter + 1
                             self.num = 0
+                            self.ResetTime()
                             self.next = False
-
-
-
-
-        # ## GAME VALUES ####
-        # self.set_CaptureImage(CurentCaptureImage)
-        # Lowwer, Upper, Color = self.get_UpperLowwerColorRange()
-        #
-        # ### CREATE COTOURS AND PRINTS ###
-        # contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
-        # self.TextOnScreen(f" ")
-        #
-        # self.START_GAME(GameName)
-        # self.END_TIME(GameName)
-        #
-        # for shape in self.AllCenterDotArray:
-        #     print(shape)
-        #     # cv2.circle(CurentCaptureImage, [shape], 30, Color, 5)
-        #
-        #
-        # for contour in contours:
-        #     area = cv.contourArea(contour)
-        #     if (area > 1000):
-        #         center = self.ColorUtils.get_ObjectCenter(contour)
-        #         cv.circle(CurentCaptureImage, center, 1, Color, 2)
-        #         self.WIN_GAME(center[0],center[1],GameName)
-
-
 
 
 
