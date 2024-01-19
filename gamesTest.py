@@ -41,6 +41,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.flag1:bool = False
         self.num:int = 0
         self.next:bool = False
+        self.SimonPattren0 = ["LU", "LD", "RD", "RU"]
         self.delay:int = 0
         self.counter:int = 0
 
@@ -98,7 +99,8 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
             if self.get_INSIDEorOUTSIDE(x,y) == "Inside": ## comper if the user inside or outside the eara
                 self.GAME_ACTIONS(1,"GO-TO")              ## if succeed make game action
         if GameName == "SIMON":
-            pass
+            self.get_INSIDEorOUTSIDESIMON(x,y)
+
 
 
 
@@ -253,6 +255,26 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
         return pos
 
+    def get_INSIDEorOUTSIDESIMON(self,x,y):
+        i = 10
+        pXend, pYstart, pXstart, pYend = self.get_CurrentSimonRec()
+        pos = self.ShapeUtils.get_PointRectangle(x,y, pXend, pYstart, pXstart, pYend)
+
+        if pos == "Inside":
+            if self.delay != i:
+                self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],
+                                              color=(0, 255, 0))
+                self.delay += 1
+
+        if self.delay == i:
+            self.delay = 0
+            if self.num < self.counter:
+                self.num = self.num + 1
+            else:
+                self.counter = self.counter + 1
+                self.num = 0
+                self.ResetTime()
+                self.next = False
     def get_CurrentColor(self):
         return self.CurrentColor
 
@@ -261,6 +283,24 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
     def get_UpperLowwerColorRange(self):
         return self.CurentLowwerColorRange,self.CurrentUpperColorRange,self.CurrentPaintColor
+
+    def ShowSIMONPattern(self):
+        if self.get_CurrentTime() > 1:
+            self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num], color=(0, 0, 255))
+        if self.get_CurrentTime() == 1:
+            if self.num < self.counter:
+                self.num = self.num + 1
+            else:
+                self.num = 0
+                self.next = True
+            self.ResetTime()
+
+    def get_CurrentSimonRec(self):
+        pXstart = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["start"][0]
+        pYstart = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["start"][1]
+        pXend = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["end"][0]
+        pYend = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["end"][1]
+        return pXend, pYstart, pXstart, pYend
 
 
 
@@ -312,54 +352,25 @@ class GoTo(GameEngine):
 
 class SIMON(GameEngine):
     def GameStart(self,CurentCaptureImage,GameName):
-        i = 10
+
         self.set_CaptureImage(CurentCaptureImage)
         Lowwer, Upper, Color = self.get_UpperLowwerColorRange()
-        l = ["LU","LD","RD","RU"]
-        if self.GameName != GameName: ## if the game name is diff from the new one make new action according to the game name
-            self.GameName = GameName ## save the game name for the next time
-            self.ResetTime()
-        time = self.get_CurrentTime()
+
+        self.START_GAME(GameName)
+
         self.ColorUtils.DrawRectinles(CurentCaptureImage)
         contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
-        if self.next == False:
-            if time > 1:
-                self.ColorUtils.DrawRectinles(CurentCaptureImage,selectREC=l[self.num],color = (0,0,255))
-            if time == 1:
-                if self.num < self.counter:
-                    self.num = self.num + 1
-                else:
-                    self.num = 0
-                    self.next = True
-                self.ResetTime()
 
-        if self.next == True:
+        if not self.next:
+            self.ShowSIMONPattern()
+
+        if self.next:
             for contour in contours:
                 area = cv.contourArea(contour)
                 if (area > 1000):
                     center = self.ColorUtils.get_ObjectCenter(contour)
                     cv.circle(CurentCaptureImage, center, 1, Color, 2)
-                    pXstart = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["start"][0]
-                    pYstart = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["start"][1]
-                    pXend = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["end"][0]
-                    pYend = self.SETUP_VARS[f"MT_{l[self.num]}_Rectingle"]["end"][1]
-                    pos = self.ShapeUtils.get_PointRectangle(center[0], center[1], pXend, pYstart, pXstart, pYend)
-                    self.TextOnScreen(f"{pos}")
-
-                    if pos == "Inside":
-                        if self.delay != i:
-                            self.ColorUtils.DrawRectinles(CurentCaptureImage, selectREC=l[self.num], color=(0, 255, 0))
-                            self.delay +=1
-
-                    if self.delay == i:
-                        self.delay = 0
-                        if self.num < self.counter:
-                            self.num = self.num + 1
-                        else:
-                            self.counter = self.counter + 1
-                            self.num = 0
-                            self.ResetTime()
-                            self.next = False
+                    self.WIN_GAME(center[0], center[1], GameName)
 
 
 
