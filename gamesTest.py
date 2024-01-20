@@ -37,6 +37,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.set_UpperLowwerColorRange(True) ## setting UpperLowwerColorRange
         self.ResetScore() ## reset score
         self.ResetStoper() ## reaset stopper
+        self.OneSecPass:bool = False
         self.flag:bool = False
         self.flag1:bool = False
         self.num:int = 0
@@ -64,7 +65,16 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
             self.set_UpperLowwerColorRange(True)
             self.ColorUtils.set_MakeShapeScreen(self.image,self.CurrentPaintColor, flag=1)
         elif GameName == "SIMON":## if the game is SIMON ....
-            self.set_NewCenterPoint()
+            if not self.set_OneSecTimer():
+                self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],color=(0, 255, 0))
+            else:
+                if self.num < self.counter:
+                    self.num = self.num + 1
+                else:
+                    self.counter = self.counter + 1
+                    self.num = 0
+                    self.ResetTime()
+                    self.next = False
 
     def START_GAME(self,GameName:str)-> 'opperate when game start':
         if self.GameName != GameName: ## if the game name is diff from the new one make new action according to the game name
@@ -94,12 +104,13 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         if GameName == "ODED AMAR":
             WereAMI = self.ColorUtils.get_location(x, y) ## get the location of the user
             if self.get_Currentlocation() == WereAMI: ## comper the location to the location he need to be
-                self.GAME_ACTIONS(1,"ODED AMAR")      ## if he succeed make game action
+                self.GAME_ACTIONS(1,GameName)      ## if he succeed make game action
         if GameName == "GO-TO":
-            if self.get_INSIDEorOUTSIDE(x,y) == "Inside": ## comper if the user inside or outside the eara
-                self.GAME_ACTIONS(1,"GO-TO")              ## if succeed make game action
+            if self.get_INSIDEorOUTSIDE(x,y,GameName) == "Inside": ## comper if the user inside or outside the eara
+                self.GAME_ACTIONS(1,GameName)              ## if succeed make game action
         if GameName == "SIMON":
-            self.get_INSIDEorOUTSIDESIMON(x,y)
+            if self.get_INSIDEorOUTSIDE(x,y,GameName) == "Inside":
+                self.GAME_ACTIONS(1,GameName)
 
 
 
@@ -120,13 +131,16 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
 
     def CREATE_RESULTE_FILE(self,SuccessOrFiled:str,GameName:str)-> 'write to the file data the user attempet info':
-        with open(self.GameDataFile, "a") as file:
-            if GameName == "ODED AMAR":
-                file.write(f"Action = {self.get_CurrentColor()},{self.get_Currentlocation()}.\n")
-            if GameName == "GO-TO":
-                file.write(f"Action = {self.get_CurrentColor()},{self.get_Shape()}.\n")
-            file.write(f"{GameName} {self.GameAttempt} {SuccessOrFiled} {self.get_CurrentStoper()}.\n")
-        self.GameAttempt +=1
+        if self.get_CurrentStoper() != 1:
+            with open(self.GameDataFile, "a") as file:
+                if GameName == "ODED AMAR":
+                    file.write(f"Action = {self.get_CurrentColor()},{self.get_Currentlocation()}.\n")
+                if GameName == "GO-TO":
+                    file.write(f"Action = {self.get_CurrentColor()},{self.get_Shape()}.\n")
+                if GameName == "SIMON":
+                    pass
+                file.write(f"{GameName} {self.GameAttempt} {SuccessOrFiled} {self.get_CurrentStoper()}.\n")
+            self.GameAttempt +=1
 
     # def AddActiontoDataFile(self,GameName):
     #     Time = self.get_CurrentTime()
@@ -178,6 +192,15 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
     def set_RandomColor(self,flag:bool = False)-> 'change var member to current color':
         if flag:
             self.CurrentColor = self.ArrayColors[random.randint(0, 1)]
+
+    def set_OneSecTimer(self):
+        if self.OneSecFlag:
+            self.OneSecPass = True
+        if self.OneSecPass and self.OneSecFlag:
+            self.OneSecPass = False
+            return True
+        else:
+            return False
 
     def set_NewCenterPoint(self)-> '':
         self.Xdot, self.Ydot = self.ShapeUtils.get_CenterPoint(flag=1)
@@ -242,39 +265,43 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         elif l == 4:
             return "RECTANGLE"
 
-    def get_INSIDEorOUTSIDE(self,x,y):
-        arr = self.get_ShapePoints()
-        # pos = "outside"
-        l = len(arr)
-        if l == 3:
-            pos = self.ShapeUtils.get_PointCircle(x, y, arr[0], arr[1], arr[2])
-        elif l == 6:
-            pos = self.ShapeUtils.get_PointTriangle(x, y, arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
-        elif l == 4:
-            pos = self.ShapeUtils.get_PointRectangle(x, y, arr[0], arr[1], arr[2], arr[3])
+    def get_INSIDEorOUTSIDE(self,x:int,y:int,GameName:str)->'search if the tracking dot in the ROI':
+        pos = "outside" # init the var
+        if GameName == "GO-TO":
+            arr = self.get_ShapePoints()
+            l = len(arr)
+            if l == 3:
+                pos = self.ShapeUtils.get_PointCircle(x, y, arr[0], arr[1], arr[2])
+            elif l == 6:
+                pos = self.ShapeUtils.get_PointTriangle(x, y, arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
+            elif l == 4:
+                pos = self.ShapeUtils.get_PointRectangle(x, y, arr[0], arr[1], arr[2], arr[3])
+        elif GameName == "SIMON":
+            pXstart = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["start"][0]
+            pYstart = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["start"][1]
+            pXend = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["end"][0]
+            pYend = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["end"][1]
+            pos = self.ShapeUtils.get_PointRectangle(x, y, pXend, pYstart, pXstart, pYend)
 
         return pos
 
-    def get_INSIDEorOUTSIDESIMON(self,x,y):
-        i = 10
-        pXend, pYstart, pXstart, pYend = self.get_CurrentSimonRec()
-        pos = self.ShapeUtils.get_PointRectangle(x,y, pXend, pYstart, pXstart, pYend)
-
-        if pos == "Inside":
-            if self.delay != i:
-                self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],
-                                              color=(0, 255, 0))
-                self.delay += 1
-
-        if self.delay == i:
-            self.delay = 0
-            if self.num < self.counter:
-                self.num = self.num + 1
-            else:
-                self.counter = self.counter + 1
-                self.num = 0
-                self.ResetTime()
-                self.next = False
+    # def get_INSIDEorOUTSIDESIMON(self,pos):
+    #     i = 10
+    #     if pos == "Inside":
+    #         if self.delay != i:
+    #             self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],
+    #                                           color=(0, 255, 0))
+    #             self.delay += 1
+    #
+    #     if self.delay == i:
+    #         self.delay = 0
+    #         if self.num < self.counter:
+    #             self.num = self.num + 1
+    #         else:
+    #             self.counter = self.counter + 1
+    #             self.num = 0
+    #             self.ResetTime()
+    #             self.next = False
     def get_CurrentColor(self):
         return self.CurrentColor
 
@@ -285,26 +312,15 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         return self.CurentLowwerColorRange,self.CurrentUpperColorRange,self.CurrentPaintColor
 
     def ShowSIMONPattern(self):
-        if self.get_CurrentTime() > 1:
+        if self.get_CurrentTime() > 3:
             self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num], color=(0, 0, 255))
-        if self.get_CurrentTime() == 1:
+        if self.get_CurrentTime() == 2:
             if self.num < self.counter:
                 self.num = self.num + 1
             else:
                 self.num = 0
                 self.next = True
             self.ResetTime()
-
-    def get_CurrentSimonRec(self):
-        pXstart = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["start"][0]
-        pYstart = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["start"][1]
-        pXend = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["end"][0]
-        pYend = self.SETUP_VARS[f"MT_{self.SimonPattren0[self.num]}_Rectingle"]["end"][1]
-        return pXend, pYstart, pXstart, pYend
-
-
-
-
 
 
 class OdedAmar(GameEngine):
