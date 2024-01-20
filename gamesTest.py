@@ -110,7 +110,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                 self.GAME_ACTIONS(1,GameName)              ## if succeed make game action
         if GameName == "SIMON":
             if self.get_INSIDEorOUTSIDE(x,y,GameName) == "Inside":
-                self.GAME_ACTIONS(1,GameName)
+                self.GAME_ACTIONS(1,"SIMON")
 
 
 
@@ -133,12 +133,23 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
     def CREATE_RESULTE_FILE(self,SuccessOrFiled:str,GameName:str)-> 'write to the file data the user attempet info':
         if self.get_CurrentStoper() != 1:
             with open(self.GameDataFile, "a") as file:
+                pattern = 0
                 if GameName == "ODED AMAR":
                     file.write(f"Action = {self.get_CurrentColor()},{self.get_Currentlocation()}.\n")
                 if GameName == "GO-TO":
                     file.write(f"Action = {self.get_CurrentColor()},{self.get_Shape()}.\n")
                 if GameName == "SIMON":
-                    pass
+                    file.write("the pattern = ")
+                    c = 0
+                    if self.counter == 0:
+                        file.write("LU")
+                    else:
+                     while not(self.counter < c):
+                        file.write(f"{self.SimonPattren0[c]}  ")
+                        c+=1
+                    file.write("\n")
+                    file.write(f"correctly rec = {self.SimonPattren0[self.num]}")
+                    file.write("\n")
                 file.write(f"{GameName} {self.GameAttempt} {SuccessOrFiled} {self.get_CurrentStoper()}.\n")
             self.GameAttempt +=1
 
