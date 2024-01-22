@@ -73,6 +73,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         elif GameName == "SIMON":## if the game is SIMON ....
             if Mode == 1:
                 if not self.set_OneSecTimer():
+                    self.set_CurentColor(Green)
                     self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],color=ColorDataBase(Paint,Green).Get_Data())
                 else:
                     if self.num < self.counter:
@@ -84,8 +85,10 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                         self.next = False
             elif Mode == 2:
                 if self.SimonPattren0[self.num - 1] == self.CurrentRec:
+                    self.set_CurentColor(Blue)
                     self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec, color=ColorDataBase(Paint,Blue).Get_Data())
                 else:
+                    self.set_CurentColor(Red)
                     self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,color=ColorDataBase(Paint,Red).Get_Data())
 
 
@@ -176,7 +179,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                         file.write(f"{self.SimonPattren0[c]}  ")
                         c+=1
                     file.write("\n")
-                    file.write(f"correctly rec = {self.CurrentRec} , correctly color = ")
+                    file.write(f"correctly rec = {self.CurrentRec} , correctly color = {self.get_CurrentColor()} ")
                     file.write("\n")
                 file.write(f"{GameName} {self.GameAttempt} {SuccessOrFiled} {self.get_CurrentStoper()}.\n")
             self.GameAttempt +=1
@@ -232,7 +235,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         if flag:
             self.CurrentColor = self.ArrayColors[random.randint(0, 1)]
 
-    def set_CurentColor(self,color:tuple):
+    def set_CurentColor(self,color:str):
         self.CurrentColor = color
 
     def set_OneSecTimer(self):
