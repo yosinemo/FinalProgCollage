@@ -7,6 +7,7 @@ import numpy as np
 import cv2 as cv
 from GameSetup import *
 from shapes import shapes
+from ColorDataBase import *
 from MainDynGui import MainDynGUI
 
 ##using type hints can help catch errors early in development, improve code readability, and provide better documentation, but it doesn't affect the runtime performance of the Python code
@@ -72,7 +73,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         elif GameName == "SIMON":## if the game is SIMON ....
             if Mode == 1:
                 if not self.set_OneSecTimer():
-                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],color=(0, 255, 0))
+                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],color=ColorDataBase(Paint,Green).Get_Data())
                 else:
                     if self.num < self.counter:
                         self.num = self.num + 1
@@ -83,9 +84,9 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                         self.next = False
             elif Mode == 2:
                 if self.SimonPattren0[self.num - 1] == self.CurrentRec:
-                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec, color=(255, 0, 0))
+                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec, color=ColorDataBase(Paint,Blue).Get_Data())
                 else:
-                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,color=(0,0, 255))
+                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,color=ColorDataBase(Paint,Red).Get_Data())
 
 
     def START_GAME(self,GameName:str)-> 'opperate when game start':
