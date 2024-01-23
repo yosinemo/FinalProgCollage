@@ -7,6 +7,7 @@ import numpy as np
 Red = "Red"
 Green = "Green"
 Blue = "Blue"
+Pink = "Pink"
 Paint = "Paint"
 Color_Range = "Color Range"
 

@@ -145,16 +145,16 @@ class utils:
             cv2.rectangle(image, point1, point2, color, thikness)
             return arr
 
-    def ColorDataBase(self,color):
-        COLORS = {"Green": {'up': [85, 255, 255], 'low': [35, 50, 50],"paint":(0,255,0)},
-                  "Red": {'up': [7,219,255], 'low': [0,170,196],"paint":(0,0,255)},
-                  "Blue": {'up': [113,255,255], 'low': [104,127,147],"paint":(255,0,0)},
-                  "Pink": {'up': [179,175,255], 'low': [164,97,95],"paint":(193, 182, 255)},
-                  "Black": {'up': [0,0,0], 'low': [0,0,0],"paint":(0, 0, 0)},
-                  "Purpel": {'up': [145, 165, 187], 'low': [121, 75, 61], "paint": (128, 0, 128)},
-                  "Yellow": {'up': [22,250,241], 'low': [0,163,97], "paint": (0, 255, 255)}}
-
-        return COLORS[color]
+    # def ColorDataBase(self,color):
+    #     COLORS = {"Green": {'up': [85, 255, 255], 'low': [35, 50, 50],"paint":(0,255,0)},
+    #               "Red": {'up': [7,219,255], 'low': [0,170,196],"paint":(0,0,255)},
+    #               "Blue": {'up': [113,255,255], 'low': [104,127,147],"paint":(255,0,0)},
+    #               "Pink": {'up': [179,175,255], 'low': [164,97,95],"paint":(193, 182, 255)},
+    #               "Black": {'up': [0,0,0], 'low': [0,0,0],"paint":(0, 0, 0)},
+    #               "Purpel": {'up': [145, 165, 187], 'low': [121, 75, 61], "paint": (128, 0, 128)},
+    #               "Yellow": {'up': [22,250,241], 'low': [0,163,97], "paint": (0, 255, 255)}}
+    #
+    #     return COLORS[color]
 
 
     def DrawRectinles(self,image,selectREC:str = None,color:tuple = (0,0,0), thickness:int = 5):

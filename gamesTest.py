@@ -261,9 +261,11 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         if flag:
             self.set_RandomColor(flag) ## choose rand color
             self.set_RandomLocation(flag) ## choose rand location
-        self.CurentLowwerColorRange = np.array(self.ColorUtils.ColorDataBase(self.CurrentColor)["low"]) ## make low range color
-        self.CurrentUpperColorRange = np.array(self.ColorUtils.ColorDataBase(self.CurrentColor)["up"]) ## make up range  color
-        self.CurrentPaintColor      = self.ColorUtils.ColorDataBase(self.CurrentColor)["paint"] ## make paint color
+        self.CurrentUpperColorRange, self.CurentLowwerColorRange = ColorDataBase(Color_Range,self.CurrentColor).Get_Data()
+        self.CurrentPaintColor = ColorDataBase(Paint,self.CurrentColor).Get_Data()
+        # self.CurentLowwerColorRange = np.array(self.ColorUtils.ColorDataBase(self.CurrentColor)["low"]) ## make low range color
+        # self.CurrentUpperColorRange = np.array(self.ColorUtils.ColorDataBase(self.CurrentColor)["up"]) ## make up range  color
+        # self.CurrentPaintColor      = self.ColorUtils.ColorDataBase(self.CurrentColor)["paint"] ## make paint color
 
     def set_RandomLocation(self,flag = False):
         if flag:
@@ -344,26 +346,6 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
             elif self.LimboCounter > 4:
                 self.LimboCounter = 0
 
-
-
-
-    # def get_INSIDEorOUTSIDESIMON(self,pos):
-    #     i = 10
-    #     if pos == "Inside":
-    #         if self.delay != i:
-    #             self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],
-    #                                           color=(0, 255, 0))
-    #             self.delay += 1
-    #
-    #     if self.delay == i:
-    #         self.delay = 0
-    #         if self.num < self.counter:
-    #             self.num = self.num + 1
-    #         else:
-    #             self.counter = self.counter + 1
-    #             self.num = 0
-    #             self.ResetTime()
-    #             self.next = False
     def get_CurrentColor(self):
         return self.CurrentColor
 
@@ -375,7 +357,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
     def ShowSIMONPattern(self):
         if self.get_CurrentTime() > 3:
-            self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num], color=(255, 0, 255))
+            self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num], color=ColorDataBase(Paint,Pink).Get_Data())
         if self.get_CurrentTime() == 2:
             if self.num < self.counter:
                 self.num = self.num + 1
