@@ -10,6 +10,13 @@ from shapes import shapes
 from ColorDataBase import *
 from MainDynGui import MainDynGUI
 
+Oded_Amar = "ODED AMAR"
+Go_To     = "Go-To"
+Simon     = "SIMON"
+Inside    = "Inside"
+Outside   = "Outside"
+Limbo     = "Limbo"
+
 ##using type hints can help catch errors early in development, improve code readability, and provide better documentation, but it doesn't affect the runtime performance of the Python code
 
 class GameEngine(Timer):## the gamengine is where all the game are mades,the class is inheritet from Timer
@@ -32,7 +39,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         self.ColorUtils = utils() ## call color utilts class
         self.GameAttempt:int = 0 ## num of attemptes of player
         self.GameName:str = "No Game"
-        self.ArrayColors:list[str] = ["Green", "Green"] ## color array
+        self.ArrayColors:list[str] = [Green,Green] ## color array
         self.ArrayLocations:list[str] = ["up", "down", "left", "right"] ## location array
         self.compose                 = ["LU","RU","LD","RD"]
         self.set_UpperLowwerColorRange(True) ## setting UpperLowwerColorRange
@@ -65,32 +72,19 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
         self.ResetStoper() ## reset stopper every time the user failed or successed
 
-        if GameName == "ODED AMAR": ## if the game ODED AMAR need to choose new color and location when user finish task
+        if GameName == Oded_Amar: ## if the game ODED AMAR need to choose new color and location when user finish task
             self.set_UpperLowwerColorRange(True)
-        elif GameName == "GO-TO": ## ## if the GoTo need to choose new color,location and make new shape on screen after user finosh task
+        elif GameName == Go_To: ## ## if the GoTo need to choose new color,location and make new shape on screen after user finosh task
             self.set_UpperLowwerColorRange(True)
             self.ColorUtils.set_MakeShapeScreen(self.image,self.CurrentPaintColor, flag=1)
-        elif GameName == "SIMON":## if the game is SIMON ....
-            if Mode == 1:
-                if not self.set_OneSecTimer():
-                    self.set_CurentColor(Green)
-                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],color=ColorDataBase(Paint,Green).Get_Data())
-                else:
-                    if self.num < self.counter:
-                        self.num = self.num + 1
-                    else:
-                        self.counter = self.counter + 1
-                        self.num = 0
-                        self.ResetTime()
-                        self.next = False
-            elif Mode == 2:
-                if self.SimonPattren0[self.num - 1] == self.CurrentRec:
-                    self.set_CurentColor(Blue)
-                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec, color=ColorDataBase(Paint,Blue).Get_Data())
-                else:
-                    self.set_CurentColor(Red)
-                    self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,color=ColorDataBase(Paint,Red).Get_Data())
-
+        elif GameName == Simon and Mode == 1:## if the game is SIMON ....
+            if self.num < self.counter:
+                self.num = self.num + 1
+            else:
+                self.counter = self.counter + 1
+                self.num = 0
+                self.ResetTime()
+                self.next = False
 
     def START_GAME(self,GameName:str)-> 'opperate when game start':
         if self.GameName != GameName: ## if the game name is diff from the new one make new action according to the game name
@@ -117,35 +111,14 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
 
     def WIN_GAME(self,x:int,y:int,GameName:str)-> 'check if the user win':
-        if GameName == "ODED AMAR":
-            WereAMI = self.ColorUtils.get_location(x, y) ## get the location of the user
-            if self.get_Currentlocation() == WereAMI: ## comper the location to the location he need to be
-                self.GAME_ACTIONS(1,GameName)      ## if he succeed make game action
-        if GameName == "GO-TO":
-            if self.get_INSIDEorOUTSIDE(x,y,GameName) == "Inside": ## comper if the user inside or outside the eara
-                self.GAME_ACTIONS(1,GameName)              ## if succeed make game action
-        if GameName == "SIMON":
-            # print(self.get_INSIDEorOUTSIDE(x,y,GameName) , self.LimboCounter , self.CurrentRec)
-            pos = self.get_INSIDEorOUTSIDE(x,y,GameName)
-            self.SwichCase(pos,GameName)
-
-    def SwichCase(self,case,GameName):
-        if case == "Inside":
+        pos = self.get_INSIDEorOUTSIDE(x,y,GameName)
+        print(pos)
+        if pos == Inside:
             self.GAME_ACTIONS(1, GameName)
-        elif case == "Outside":
+        elif pos == Outside:
             self.GAME_ACTIONS(2, GameName)
-        elif case == "Limbo":
+        elif pos == Limbo:
             pass
-        # Swich_Pos = {
-        #     "Outside"   :  self.GAME_ACTIONS(2,GameName),
-        #     "Inside": self.GAME_ACTIONS(1, GameName)    ,
-        #     "Limbo"     :  self.GAME_ACTIONS(4,GameName)
-        # }
-
-
-
-
-
 
     def CREATE_GAME_DATA_FILE(self)-> 'create a file every stating new game give time and date':
         date= self.SETUP_VARS["DATE"]
@@ -165,11 +138,11 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
         if self.get_CurrentStoper() > 5:
             with open(self.GameDataFile, "a") as file:
                 pattern = 0
-                if GameName == "ODED AMAR":
+                if GameName == Oded_Amar:
                     file.write(f"Action = {self.get_CurrentColor()},{self.get_Currentlocation()}.\n")
-                if GameName == "GO-TO":
+                if GameName == Go_To:
                     file.write(f"Action = {self.get_CurrentColor()},{self.get_Shape()}.\n")
-                if GameName == "SIMON":
+                if GameName == Simon:
                     file.write("the pattern = ")
                     c = 0
                     if self.counter == 0:
@@ -183,18 +156,6 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                     file.write("\n")
                 file.write(f"{GameName} {self.GameAttempt} {SuccessOrFiled} {self.get_CurrentStoper()}.\n")
             self.GameAttempt +=1
-
-    # def AddActiontoDataFile(self,GameName):
-    #     Time = self.get_CurrentTime()
-    #     if Time == 5:
-    #         self.flag1 = True
-    #     if self.flag1 and Time == 4:
-    #         with open(self.GameDataFile, "a") as file:
-    #             if GameName == "ODED AMAR":
-    #                 file.write(f"Action = {self.get_CurrentColor()},{self.get_Currentlocation()}.\n")
-    #             if GameName == "GO-TO":
-    #                 file.write(f"Action = {self.get_CurrentColor()},{self.get_Shape()}.\n")
-    #         self.flag1 = False
 
     def TextOnScreen(self,text:str)-> 'write text':
         Time = self.get_CurrentTime()
@@ -263,9 +224,6 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
             self.set_RandomLocation(flag) ## choose rand location
         self.CurrentUpperColorRange, self.CurentLowwerColorRange = ColorDataBase(Color_Range,self.CurrentColor).Get_Data()
         self.CurrentPaintColor = ColorDataBase(Paint,self.CurrentColor).Get_Data()
-        # self.CurentLowwerColorRange = np.array(self.ColorUtils.ColorDataBase(self.CurrentColor)["low"]) ## make low range color
-        # self.CurrentUpperColorRange = np.array(self.ColorUtils.ColorDataBase(self.CurrentColor)["up"]) ## make up range  color
-        # self.CurrentPaintColor      = self.ColorUtils.ColorDataBase(self.CurrentColor)["paint"] ## make paint color
 
     def set_RandomLocation(self,flag = False):
         if flag:
@@ -277,22 +235,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
 
 ################## ALL GETERS ####################
     def get_CurrentTime(self):
-        # with open(self.Timer.get_FileLocation(), "r") as file:
-        #     return file.read()
         return self.StratTimeSec
-
-    # def get_RandomDotArray(self):
-    #     Xdot, Ydot = self.ShapeUtils.get_CenterPoint(flag=1)
-    #     center  = (Xdot,Ydot)
-    #     CenterArray = []
-    #     CenterArray[0] = center
-    #     for i in range(1,10):
-    #         Xdot, Ydot = self.ShapeUtils.get_CenterPoint(flag=1)
-    #         if abs(Xdot - center[0]) > 300 and abs(Ydot - center[1]) > 300:
-    #             center = (Xdot, Ydot)
-    #             CenterArray[i] = center
-    #     return CenterArray
-
 
     def get_CurrentStoper(self):
         return self.CurrentStoper
@@ -313,8 +256,12 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
             return "RECTANGLE"
 
     def get_INSIDEorOUTSIDE(self,x:int,y:int,GameName:str)->'search if the tracking dot in the ROI':
-        pos = "outside" # init the var
-        if GameName == "GO-TO":
+        if GameName == Oded_Amar:
+           WereAMI = self.ColorUtils.get_location(x, y)  ## get the location of the user
+           if self.get_Currentlocation() == WereAMI:
+               return Inside
+        if GameName == Go_To:
+            pos = Outside  # init the var
             arr = self.get_ShapePoints()
             l = len(arr)
             if l == 3:
@@ -324,27 +271,45 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
             elif l == 4:
                 pos = self.ShapeUtils.get_PointRectangle(x, y, arr[0], arr[1], arr[2], arr[3])
             return pos
-        elif GameName == "SIMON":
+        elif GameName == Simon:
             for RecLoc in ["LU","LD","RU","RD"]:
                 pXstart = self.SETUP_VARS[f"MT_{RecLoc}_Rectingle"]["start"][0]
                 pYstart = self.SETUP_VARS[f"MT_{RecLoc}_Rectingle"]["start"][1]
                 pXend   = self.SETUP_VARS[f"MT_{RecLoc}_Rectingle"]["end"][0]
                 pYend   = self.SETUP_VARS[f"MT_{RecLoc}_Rectingle"]["end"][1]
-                if "Inside" == self.ShapeUtils.get_PointRectangle(x, y, pXend, pYstart, pXstart, pYend):
+                if Inside == self.ShapeUtils.get_PointRectangle(x, y, pXend, pYstart, pXstart, pYend):
                     self.CurrentRec = RecLoc
                     if RecLoc == self.SimonPattren0[self.num]:
-                        return "Inside"
+                        if not self.set_OneSecTimer():
+                            self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],
+                                                          color=ColorDataBase(Paint, Green).Get_Data())
+                            self.set_CurentColor(Green)
+                        else:
+                            return Inside
+                    elif RecLoc == self.SimonPattren0[self.num - 1]:
+                        if not self.set_OneSecTimer():
+                            self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,
+                                                          color=ColorDataBase(Paint, Blue).Get_Data())
+                            self.set_CurentColor(Blue)
+                        else:
+                            return Limbo
                     else:
-                        return "Outside"
+                        if not self.set_OneSecTimer():
+                            self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,
+                                                          color=ColorDataBase(Paint, Red).Get_Data())
+                            self.set_CurentColor(Red)
+                        else:
+                            return Outside
                 else:
                     self.LimboCounter+=1
 
             if self.LimboCounter == 4:
                 self.LimboCounter = 0
                 self.CurrentRec = "None"
-                return "Limbo"
+                return Limbo
             elif self.LimboCounter > 4:
                 self.LimboCounter = 0
+
 
     def get_CurrentColor(self):
         return self.CurrentColor
@@ -420,7 +385,7 @@ class SIMON(GameEngine):
 
         self.ColorUtils.DrawRectinles(CurentCaptureImage)
         contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
-
+        print(self.counter)
         if not self.next:
             self.ShowSIMONPattern()
 

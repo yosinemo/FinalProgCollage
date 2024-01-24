@@ -8,6 +8,8 @@ Red = "Red"
 Green = "Green"
 Blue = "Blue"
 Pink = "Pink"
+Red  = "Red"
+Yellow = "Yellow"
 Paint = "Paint"
 Color_Range = "Color Range"
 
