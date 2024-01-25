@@ -152,7 +152,12 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                         file.write(f"{self.SimonPattren0[c]}  ")
                         c+=1
                     file.write("\n")
-                    file.write(f"correctly rec = {self.CurrentRec} , correctly color = {self.get_CurrentColor()} ")
+                    if self.CurrentRec == self.SimonPattren0[self.num]:
+                        file.write(f"correctly rec = {self.CurrentRec} , correctly color = Green ")
+                    elif self.CurrentRec == self.SimonPattren0[-1]:
+                        file.write(f"correctly rec = {self.CurrentRec} , correctly color = Blue ")
+                    else:
+                        file.write(f"correctly rec = {self.CurrentRec} , correctly color = Red ")
                     file.write("\n")
                 file.write(f"{GameName} {self.GameAttempt} {SuccessOrFiled} {self.get_CurrentStoper()}.\n")
             self.GameAttempt +=1
@@ -283,23 +288,15 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
                         if not self.set_OneSecTimer():
                             self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num],
                                                           color=ColorDataBase(Paint, Green).Get_Data())
-                            self.set_CurentColor(Green)
-                        else:
-                            return Inside
                     elif RecLoc == self.SimonPattren0[self.num - 1]:
                         if not self.set_OneSecTimer():
                             self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,
                                                           color=ColorDataBase(Paint, Blue).Get_Data())
-                            self.set_CurentColor(Blue)
-                        else:
-                            return Limbo
                     else:
                         if not self.set_OneSecTimer():
                             self.ColorUtils.DrawRectinles(self.image, selectREC=self.CurrentRec,
                                                           color=ColorDataBase(Paint, Red).Get_Data())
-                            self.set_CurentColor(Red)
-                        else:
-                            return Outside
+                    return Inside
                 else:
                     self.LimboCounter+=1
 
@@ -320,16 +317,7 @@ class GameEngine(Timer):## the gamengine is where all the game are mades,the cla
     def get_UpperLowwerColorRange(self):
         return self.CurentLowwerColorRange,self.CurrentUpperColorRange,self.CurrentPaintColor
 
-    def ShowSIMONPattern(self):
-        if self.get_CurrentTime() > 3:
-            self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num], color=ColorDataBase(Paint,Pink).Get_Data())
-        if self.get_CurrentTime() == 2:
-            if self.num < self.counter:
-                self.num = self.num + 1
-            else:
-                self.num = 0
-                self.next = True
-            self.ResetTime()
+
 
 
 class OdedAmar(GameEngine):
@@ -376,6 +364,7 @@ class GoTo(GameEngine):
                 self.WIN_GAME(center[0],center[1],GameName)
 
 class SIMON(GameEngine):
+
     def GameStart(self,CurentCaptureImage,GameName):
 
         self.set_CaptureImage(CurentCaptureImage)
@@ -385,7 +374,6 @@ class SIMON(GameEngine):
 
         self.ColorUtils.DrawRectinles(CurentCaptureImage)
         contours = self.ColorUtils.get_ContursandHirarchy(Upper, Lowwer, CurentCaptureImage)
-        print(self.counter)
         if not self.next:
             self.ShowSIMONPattern()
 
@@ -398,5 +386,14 @@ class SIMON(GameEngine):
                     self.WIN_GAME(center[0], center[1], GameName)
 
 
-
+    def ShowSIMONPattern(self):
+        if self.get_CurrentTime() > 3:
+            self.ColorUtils.DrawRectinles(self.image, selectREC=self.SimonPattren0[self.num], color=ColorDataBase(Paint,Pink).Get_Data())
+        if self.get_CurrentTime() == 2:
+            if self.num < self.counter:
+                self.num = self.num + 1
+            else:
+                self.num = 0
+                self.next = True
+            self.ResetTime()
 
