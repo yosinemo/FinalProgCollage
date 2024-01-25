@@ -10,6 +10,9 @@ from shapes import shapes
 from ColorDataBase import *
 from MainDynGui import MainDynGUI
 
+
+# hello
+
 Oded_Amar = "ODED AMAR"
 Go_To     = "Go-To"
 Simon     = "SIMON"
